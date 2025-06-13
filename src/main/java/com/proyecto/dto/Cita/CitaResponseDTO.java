@@ -16,8 +16,11 @@ public class CitaResponseDTO {
     private Long id;
     private String nombreCliente;
     private String telefono;
+    private String correo;
     private String servicio;
+    private Double precio;
     private LocalDate fecha;
     private LocalTime hora;
+    private String observaciones;
     private String estado;
 }
