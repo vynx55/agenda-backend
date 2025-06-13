@@ -19,8 +19,8 @@ public class CitaResponseDTO {
     private String correo;
     private String servicio;
     private Double precio;
-    private LocalDate fecha;
-    private LocalTime hora;
+    private String fecha;
+    private String hora;
     private String observaciones;
     private String estado;
 }
