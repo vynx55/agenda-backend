@@ -27,9 +27,12 @@ public class CitaMapper {
                 .id(entity.getId())
                 .nombreCliente(entity.getNombreCliente())
                 .telefono(entity.getTelefono())
+                .correo(entity.getCorreo())
                 .servicio(entity.getServicio())
+                .precio(entity.getPrecio())
                 .fecha(entity.getFecha())
                 .hora(entity.getHora())
+                .observaciones(entity.getObservaciones())
                 .estado(entity.getEstado())
                 .build();
     }
