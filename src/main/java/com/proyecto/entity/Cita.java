@@ -22,7 +22,6 @@ public class Cita {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String nombreCliente;
     private String telefono;
     private String correo;
