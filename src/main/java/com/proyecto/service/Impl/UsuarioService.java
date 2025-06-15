@@ -12,9 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
-@Primary
 @Service
+@Primary
 public class UsuarioService implements UserDetailsService {
 
     private final UsuarioRepositorio repo;
@@ -30,8 +29,9 @@ public class UsuarioService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Usuario u = repo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+    public UserDetails loadUserByUsername(String username) {
+        Usuario u = repo.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
         return User.builder()
                 .username(u.getUsername())
                 .password(u.getPassword())
@@ -45,8 +45,7 @@ public class UsuarioService implements UserDetailsService {
     }
 
     public Usuario buscarPorUsername(String username) {
-        return repo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+        return repo.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
     }
-
 }
-
