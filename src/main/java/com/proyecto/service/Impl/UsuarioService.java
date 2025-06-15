@@ -20,7 +20,7 @@ public class UsuarioService implements UserDetailsService {
     private final UsuarioRepositorio repo;
     private PasswordEncoder encoder;
 
-    public UsuarioService(UsuarioRepositorio repo, PasswordEncoder encoder) {
+    public UsuarioService(UsuarioRepositorio repo) {
         this.repo = repo;
     }
 
