@@ -3,6 +3,7 @@ package com.proyecto.service.Impl;
 import com.proyecto.entity.Usuario;
 import com.proyecto.repository.UsuarioRepositorio;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,10 +18,14 @@ import org.springframework.stereotype.Service;
 public class UsuarioService implements UserDetailsService {
 
     private final UsuarioRepositorio repo;
-    private final PasswordEncoder encoder;
+    private PasswordEncoder encoder;
 
     public UsuarioService(UsuarioRepositorio repo, PasswordEncoder encoder) {
         this.repo = repo;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder encoder) {
         this.encoder = encoder;
     }
 
