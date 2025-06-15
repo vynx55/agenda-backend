@@ -12,15 +12,19 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-@RequiredArgsConstructor
 public class UsuarioService implements UserDetailsService {
 
-    public final UsuarioRepositorio repo;
+    private final UsuarioRepositorio repo;
     private final PasswordEncoder encoder;
+
+    public UsuarioService(UsuarioRepositorio repo, PasswordEncoder encoder) {
+        this.repo = repo;
+        this.encoder = encoder;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Usuario u = repo.findByUsername(username).orElseThrow();
+        Usuario u = repo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
         return User.builder()
                 .username(u.getUsername())
                 .password(u.getPassword())
@@ -32,4 +36,10 @@ public class UsuarioService implements UserDetailsService {
         u.setPassword(encoder.encode(u.getPassword()));
         return repo.save(u);
     }
+
+    public Usuario buscarPorUsername(String username) {
+        return repo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+    }
+
 }
+

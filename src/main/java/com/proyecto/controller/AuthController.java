@@ -28,7 +28,7 @@ public class AuthController {
     public AuthResponse login(@RequestBody LoginRequest req) {
         manager.authenticate(new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword()));
         UserDetails user = usuarioService.loadUserByUsername(req.getUsername());
-        Usuario entity = usuarioService.repo.findByUsername(req.getUsername()).orElseThrow();
+        Usuario entity = usuarioService.buscarPorUsername(req.getUsername());
         String token = jwtUtil.generateToken(user, entity.getRol());
         return new AuthResponse(token);
     }
