@@ -17,10 +17,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final UsuarioService usuarioService;
+
+    public SecurityConfig(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
@@ -52,4 +55,3 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
-

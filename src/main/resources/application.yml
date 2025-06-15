@@ -3,7 +3,7 @@ server:
 
 spring:
   main:
-    allow-circular-references: false
+    allow-circular-references: true
   datasource:
     url: jdbc:mysql://mysql.railway.internal:3306/railway
     username: root

@@ -2,7 +2,6 @@ package com.proyecto.service.Impl;
 
 import com.proyecto.entity.Usuario;
 import com.proyecto.repository.UsuarioRepositorio;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.User;
@@ -29,7 +28,7 @@ public class UsuarioService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Usuario u = repo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
         return User.builder()
