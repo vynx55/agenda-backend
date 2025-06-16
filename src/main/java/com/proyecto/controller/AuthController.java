@@ -24,6 +24,12 @@ public class AuthController {
     private final UsuarioService usuarioService;
     private final JwtUtil jwtUtil;
 
+    @PostMapping("/crear-admin")
+    public Usuario crearAdmin(@RequestBody Usuario u) {
+        u.setRol("ADMIN"); // Forzamos el rol ADMIN
+        return usuarioService.registrar(u);
+    }
+    
     @PostMapping("/login")
     public AuthResponse login(@RequestBody LoginRequest req) {
         manager.authenticate(new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword()));
