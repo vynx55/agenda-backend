@@ -7,7 +7,6 @@ import com.proyecto.entity.Usuario;
 import com.proyecto.mapper.CitaMapper;
 import com.proyecto.repository.CitaRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +21,7 @@ public class CitaServiceImpl implements CitaService {
     private final CitaMapper citaMapper;
     private final UsuarioService usuarioService;
 
+    // 🟥 ADMIN: Ver todas las citas
     @Override
     public List<CitaResponseDTO> listar() {
         return citaRepository.findAll().stream()
@@ -29,39 +29,48 @@ public class CitaServiceImpl implements CitaService {
                 .collect(Collectors.toList());
     }
 
+    // 🟨 USER/ADMIN: Buscar una cita por ID (validación según necesidad)
     @Override
     public Optional<CitaResponseDTO> buscar(Long id) {
         return citaRepository.findById(id).map(citaMapper::toResponse);
     }
 
+    // 🟨 USER/ADMIN: Crear una nueva cita vinculada al usuario autenticado
     @Override
     public CitaResponseDTO guardar(CitaRequestDTO requestDTO, String username) {
+        Usuario usuario = usuarioService.buscarPorUsername(username);
         Cita cita = citaMapper.toEntity(requestDTO);
-        cita.setUsuario(usuarioService.buscarPorUsername(username)); // Aquí el usuario logueado
+        cita.setUsuario(usuario);
         return citaMapper.toResponse(citaRepository.save(cita));
     }
 
-
+    // 🟥 ADMIN: Editar cita sin cambiar usuario
     @Override
     public CitaResponseDTO editar(Long id, CitaRequestDTO requestDTO) {
-        Cita cita = citaMapper.toEntity(requestDTO);
-        cita.setId(id);
-        // Si quieres dejar el usuario fijo o no permitir editarlo, puedes omitirlo aquí
+        Cita cita = citaRepository.findById(id).orElseThrow();
+
+        cita.setFecha(requestDTO.getFecha());
+        cita.setHora(requestDTO.getHora());
+        cita.setServicio(requestDTO.getServicio());
+        cita.setPrecio(requestDTO.getPrecio());
+        cita.setObservaciones(requestDTO.getObservaciones());
+        cita.setEstado(requestDTO.getEstado());
+
         return citaMapper.toResponse(citaRepository.save(cita));
     }
 
-
+    // 🟥 ADMIN: Eliminar cita
     @Override
     public void eliminar(Long id) {
         citaRepository.deleteById(id);
     }
 
+    // 🟨 USER: Ver solo sus citas
     @Override
     public List<CitaResponseDTO> listarPorUsername(String username) {
         Usuario usuario = usuarioService.buscarPorUsername(username);
-        List<Cita> citas = citaRepository.findByUsuario(usuario);
-        return citas.stream()
+        return citaRepository.findByUsuario(usuario).stream()
                 .map(citaMapper::toResponse)
-                .toList();
+                .collect(Collectors.toList());
     }
 }

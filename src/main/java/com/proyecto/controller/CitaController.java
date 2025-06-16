@@ -4,15 +4,11 @@ import com.proyecto.dto.Cita.CitaRequestDTO;
 import com.proyecto.dto.Cita.CitaResponseDTO;
 import com.proyecto.service.Impl.CitaService;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/citas")
 @CrossOrigin(origins = "*")
@@ -21,37 +17,35 @@ public class CitaController {
 
     private final CitaService service;
 
-
-
-    // 🟩 ADMIN: Ver todas las citas
+    // ✅ ADMIN: Ver todas las citas del sistema
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<CitaResponseDTO> listar() {
         return service.listar();
     }
 
-    // 🟨 USER: Ver solo sus propias citas
+    // ✅ USER y ADMIN: Ver solo sus propias citas
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/mis-citas")
-    public List<CitaResponseDTO> listarMisCitas(Principal principal) {
-        return service.listarPorUsername(principal.getName());
+    public List<CitaResponseDTO> listarMisCitas(Authentication auth) {
+        return service.listarPorUsername(auth.getName());
     }
 
-    // 🟨 USER y ADMIN pueden crear
+    // ✅ USER y ADMIN: Crear cita para sí mismo
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping
-    public CitaResponseDTO crear(@RequestBody CitaRequestDTO dto, Principal principal) {
-        return service.guardar(dto, principal.getName());
+    public CitaResponseDTO crear(@RequestBody CitaRequestDTO dto, Authentication auth) {
+        return service.guardar(dto, auth.getName());
     }
 
-    // 🟥 Solo ADMIN puede editar
+    // ✅ ADMIN: Editar cualquier cita
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public CitaResponseDTO editar(@PathVariable Long id, @RequestBody CitaRequestDTO dto) {
         return service.editar(id, dto);
     }
 
-    // 🟥 Solo ADMIN puede eliminar
+    // ✅ ADMIN: Eliminar cualquier cita
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {

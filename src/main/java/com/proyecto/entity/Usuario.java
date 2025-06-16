@@ -1,22 +1,33 @@
 package com.proyecto.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Usuario {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String username;
-    private String password;
-    private String rol;
-}
 
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
+    private String rol; // Ej: "USER" o "ADMIN"
+
+    @Column(nullable = false)
+    private String nombre;
+
+    @Column(nullable = false)
+    private String correo;
+
+    @Column(nullable = false)
+    private String telefono;
+}
