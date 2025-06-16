@@ -14,14 +14,17 @@ import java.time.LocalTime;
 @Builder
 public class CitaResponseDTO {
     private Long id;
-    private String nombreCliente;
-    private String telefono;
-    private String correo;
     private String servicio;
-    private Double precio;
     private String fecha;
     private String hora;
+    private Double precio;
     private String observaciones;
     private String estado;
+
+    // 🧠 Datos del usuario que creó la cita
+    private String usuarioUsername;
+    private String usuarioNombre;
+    private String usuarioCorreo;
+    private String usuarioTelefono;
 
 }

@@ -1,11 +1,12 @@
 package com.proyecto.dto.Auth;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class UsuarioRegisterRequest {
     private String username;
     private String password;
+    private String nombre;
+    private String correo;
+    private String telefono;
 }

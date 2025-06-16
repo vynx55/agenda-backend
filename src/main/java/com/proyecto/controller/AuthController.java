@@ -38,7 +38,10 @@ public class AuthController {
         Usuario u = new Usuario();
         u.setUsername(req.getUsername());
         u.setPassword(req.getPassword());
-        u.setRol("USER"); // rol fijo
+        u.setRol("USER"); // siempre USER por defecto
+        u.setNombre(req.getNombre());
+        u.setCorreo(req.getCorreo());
+        u.setTelefono(req.getTelefono());
         return usuarioService.registrar(u);
     }
 }

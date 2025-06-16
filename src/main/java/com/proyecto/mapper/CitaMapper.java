@@ -22,15 +22,19 @@ public class CitaMapper {
     public CitaResponseDTO toResponse(Cita entity){
         return CitaResponseDTO.builder()
                 .id(entity.getId())
-                .nombreCliente(entity.getNombreCliente())
-                .telefono(entity.getTelefono())
-                .correo(entity.getCorreo())
                 .servicio(entity.getServicio())
                 .precio(entity.getPrecio())
                 .fecha(entity.getFecha())
                 .hora(entity.getHora())
                 .observaciones(entity.getObservaciones())
                 .estado(entity.getEstado())
+
+                // 👇 Extrae los datos desde el usuario asociado
+                .usuarioUsername(entity.getUsuario().getUsername())
+                .usuarioNombre(entity.getUsuario().getNombre())
+                .usuarioCorreo(entity.getUsuario().getCorreo())
+                .usuarioTelefono(entity.getUsuario().getTelefono())
+
                 .build();
     }
 }
