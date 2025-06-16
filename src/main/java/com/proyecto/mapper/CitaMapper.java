@@ -10,9 +10,6 @@ public class CitaMapper {
 
     public Cita toEntity(CitaRequestDTO dto){
         return Cita.builder()
-                .nombreCliente(dto.getNombreCliente())
-                .telefono(dto.getTelefono())
-                .correo(dto.getCorreo())
                 .servicio(dto.getServicio())
                 .precio(dto.getPrecio())
                 .fecha(dto.getFecha())
