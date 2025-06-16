@@ -31,16 +31,18 @@ public class CitaMapper {
                 .observaciones(entity.getObservaciones())
                 .estado(entity.getEstado());
 
-        // Solo agregar datos del usuario si el que accede es ADMIN
+        // Solo agregar info del usuario si el rol es ADMIN
         var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.getAuthorities().stream()
+        boolean isAdmin = auth != null && auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .anyMatch(role -> role.equals("ROLE_ADMIN"))) {
+                .anyMatch(r -> r.equals("ROLE_ADMIN"));
 
-            builder.usuarioUsername(entity.getUsuario().getUsername());
-            builder.usuarioNombre(entity.getUsuario().getNombre());
-            builder.usuarioCorreo(entity.getUsuario().getCorreo());
-            builder.usuarioTelefono(entity.getUsuario().getTelefono());
+        if (isAdmin) {
+            builder
+                    .usuarioUsername(entity.getUsuario().getUsername())
+                    .usuarioNombre(entity.getUsuario().getNombre())
+                    .usuarioCorreo(entity.getUsuario().getCorreo())
+                    .usuarioTelefono(entity.getUsuario().getTelefono());
         }
 
         return builder.build();
