@@ -35,7 +35,7 @@ public class CitaServiceImpl implements CitaService {
         return citaRepository.findById(id).map(citaMapper::toResponse);
     }
 
-    // 🟨 USER/ADMIN: Crear una nueva cita vinculada al usuario autenticado
+    // 🟨 USER/ADMIN: Crear una nueva cita vinculada al usuariao autenticado
     @Override
     public CitaResponseDTO guardar(CitaRequestDTO requestDTO, String username) {
         Usuario usuario = usuarioService.buscarPorUsername(username);
