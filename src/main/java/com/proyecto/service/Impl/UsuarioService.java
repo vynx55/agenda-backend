@@ -40,7 +40,6 @@ public class UsuarioService implements UserDetailsService {
 
     public Usuario registrar(Usuario u) {
         u.setPassword(encoder.encode(u.getPassword()));
-        u.setRol("USER");
         return repo.save(u);
     }
 

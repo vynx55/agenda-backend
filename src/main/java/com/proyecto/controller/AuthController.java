@@ -3,6 +3,7 @@ package com.proyecto.controller;
 import com.proyecto.JWT.JwtUtil;
 import com.proyecto.dto.Auth.LoginRequest;
 import com.proyecto.dto.Auth.AuthResponse;
+import com.proyecto.dto.Auth.UsuarioRegisterRequest;
 import com.proyecto.entity.Usuario;
 import com.proyecto.service.Impl.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,11 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public Usuario registrar(@RequestBody Usuario u) {
+    public Usuario registrar(@RequestBody UsuarioRegisterRequest req) {
+        Usuario u = new Usuario();
+        u.setUsername(req.getUsername());
+        u.setPassword(req.getPassword());
+        u.setRol("USER"); // rol fijo
         return usuarioService.registrar(u);
     }
 }
