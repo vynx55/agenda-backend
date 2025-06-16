@@ -3,6 +3,8 @@ package com.proyecto.mapper;
 import com.proyecto.dto.Cita.CitaRequestDTO;
 import com.proyecto.dto.Cita.CitaResponseDTO;
 import com.proyecto.entity.Cita;
+import com.proyecto.entity.Usuario;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -22,29 +24,23 @@ public class CitaMapper {
     }
 
     public CitaResponseDTO toResponse(Cita entity) {
-        CitaResponseDTO.CitaResponseDTOBuilder builder = CitaResponseDTO.builder()
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+
+        Usuario usuario = entity.getUsuario();
+
+        return CitaResponseDTO.builder()
                 .id(entity.getId())
                 .servicio(entity.getServicio())
                 .precio(entity.getPrecio())
                 .fecha(entity.getFecha())
                 .hora(entity.getHora())
                 .observaciones(entity.getObservaciones())
-                .estado(entity.getEstado());
-
-        // Solo agregar info del usuario si el rol es ADMIN
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAdmin = auth != null && auth.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .anyMatch(r -> r.equals("ROLE_ADMIN"));
-
-        if (isAdmin) {
-            builder
-                    .usuarioUsername(entity.getUsuario().getUsername())
-                    .usuarioNombre(entity.getUsuario().getNombre())
-                    .usuarioCorreo(entity.getUsuario().getCorreo())
-                    .usuarioTelefono(entity.getUsuario().getTelefono());
-        }
-
-        return builder.build();
+                .estado(entity.getEstado())
+                .nombreCliente(isAdmin && usuario != null ? usuario.getNombre() : null)
+                .correo(isAdmin && usuario != null ? usuario.getCorreo() : null)
+                .telefono(isAdmin && usuario != null ? usuario.getTelefono() : null)
+                .build();
     }
 }

@@ -16,6 +16,9 @@ import java.time.LocalTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CitaResponseDTO {
     private Long id;
+    private String nombreCliente;
+    private String correo;
+    private String telefono;
     private String servicio;
     private String fecha;
     private String hora;
