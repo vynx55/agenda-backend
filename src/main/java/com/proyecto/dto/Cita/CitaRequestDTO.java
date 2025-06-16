@@ -24,4 +24,5 @@ public class CitaRequestDTO {
     private String hora;
     private String observaciones;
     private String estado;
+
 }
