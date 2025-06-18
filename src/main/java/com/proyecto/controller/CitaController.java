@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 @RestController
 @RequestMapping("/api/citas")
 @CrossOrigin(origins = "*")
@@ -17,21 +18,21 @@ public class CitaController {
 
     private final CitaService service;
 
-    // ✅ ADMIN: Ver todas las citas del sistema
+    // ✅ ADMIN: Ver todas las citas
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<CitaResponseDTO> listar() {
         return service.listar();
     }
 
-    // ✅ USER y ADMIN: Ver solo sus propias citas
+    // ✅ USER y ADMIN: Ver sus propias citas
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/mis-citas")
     public List<CitaResponseDTO> listarMisCitas(Authentication auth) {
         return service.listarPorUsername(auth.getName());
     }
 
-    // ✅ USER y ADMIN: Crear cita para sí mismo
+    // ✅ USER y ADMIN: Crear cita
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping
     public CitaResponseDTO crear(@RequestBody CitaRequestDTO dto, Authentication auth) {
@@ -50,5 +51,12 @@ public class CitaController {
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
         service.eliminar(id);
+    }
+
+    // ✅ USER y ADMIN: Cancelar su propia cita
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @DeleteMapping("/cancelar/{id}")
+    public void cancelarCitaPropia(@PathVariable Long id, Authentication auth) {
+        service.cancelarCitaPorUsuario(id, auth.getName());
     }
 }

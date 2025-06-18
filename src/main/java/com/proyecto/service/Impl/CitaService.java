@@ -19,4 +19,6 @@ public interface CitaService {
 
     // ✅ Ver citas del usuario autenticado
     List<CitaResponseDTO> listarPorUsername(String username);
+    void cancelarCitaPorUsuario(Long id, String username);
+
 }

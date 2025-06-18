@@ -25,8 +25,13 @@ public class CitaMapper {
 
     public CitaResponseDTO toResponse(Cita entity) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAdmin = auth.getAuthorities().stream()
-                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+        boolean isAdmin = false;
+
+        if (auth != null && auth.isAuthenticated()) {
+            isAdmin = auth.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .anyMatch(role -> role.equals("ROLE_ADMIN"));
+        }
 
         Usuario usuario = entity.getUsuario();
 

@@ -73,4 +73,16 @@ public class CitaServiceImpl implements CitaService {
                 .map(citaMapper::toResponse)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void cancelarCitaPorUsuario(Long id, String username) {
+        Cita cita = citaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+
+        if (!cita.getUsuario().getUsername().equals(username)) {
+            throw new RuntimeException("No puedes cancelar una cita que no te pertenece.");
+        }
+
+        citaRepository.deleteById(id);
+    }
 }
