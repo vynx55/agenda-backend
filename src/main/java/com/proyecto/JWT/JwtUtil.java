@@ -50,13 +50,17 @@ public class JwtUtil {
 
     public String generateToken(UserDetails userDetails, String rol) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("rol", rol);
+        claims.put("authorities", userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()));
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 horas
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
+
 }
