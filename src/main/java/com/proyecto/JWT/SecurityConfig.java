@@ -4,6 +4,7 @@ import com.proyecto.service.Impl.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -32,8 +33,11 @@ public class SecurityConfig {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/citas").hasRole("ADMIN") // Solo admin
-                        .requestMatchers("/api/citas/mis-citas").hasAnyRole("ADMIN", "USER") // Ambos pueden
+                        .requestMatchers(HttpMethod.GET, "/api/citas").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/citas").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/citas/cancelar/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.PUT, "/api/citas/**").hasRole("ADMIN")
+                        .requestMatchers("/api/citas/mis-citas").hasAnyRole("ADMIN", "USER")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
