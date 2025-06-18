@@ -33,11 +33,26 @@ public class SecurityConfig {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+
+                        // Ver todas las citas - solo ADMIN
                         .requestMatchers(HttpMethod.GET, "/api/citas").hasRole("ADMIN")
+
+                        // Ver citas propias - solo USER
+                        .requestMatchers(HttpMethod.GET, "/api/citas/mis-citas").hasRole("USER")
+
+                        // Crear cita - ambos roles pueden
                         .requestMatchers(HttpMethod.POST, "/api/citas").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.DELETE, "/api/citas/cancelar/**").hasAnyRole("ADMIN", "USER")
+
+                        // Editar cita - solo ADMIN
                         .requestMatchers(HttpMethod.PUT, "/api/citas/**").hasRole("ADMIN")
-                        .requestMatchers("/api/citas/mis-citas").hasAnyRole("ADMIN", "USER")
+
+                        // Eliminar cita (forzado) - solo ADMIN
+                        .requestMatchers(HttpMethod.DELETE, "/api/citas/{id}").hasRole("ADMIN")
+
+                        // Cancelar propia cita - solo USER
+                        .requestMatchers(HttpMethod.DELETE, "/api/citas/cancelar/**").hasRole("USER")
+
+                        // Todo lo demás requiere autenticación
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
