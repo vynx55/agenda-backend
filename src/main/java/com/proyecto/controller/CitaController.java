@@ -26,7 +26,7 @@ public class CitaController {
     }
 
     // ✅ USER y ADMIN: Ver sus propias citas
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/mis-citas")
     public List<CitaResponseDTO> listarMisCitas(Authentication auth) {
         return service.listarPorUsername(auth.getName());

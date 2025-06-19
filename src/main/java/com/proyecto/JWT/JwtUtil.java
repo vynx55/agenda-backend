@@ -65,6 +65,7 @@ public class JwtUtil {
     public List<SimpleGrantedAuthority> extractAuthorities(String token) {
         Claims claims = extractAllClaims(token);
         List<String> roles = claims.get("authorities", List.class);
+
         if (roles == null) return List.of();
 
         return roles.stream()

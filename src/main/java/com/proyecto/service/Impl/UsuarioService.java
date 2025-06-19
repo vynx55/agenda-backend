@@ -4,6 +4,7 @@ import com.proyecto.entity.Usuario;
 import com.proyecto.repository.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,16 +32,19 @@ public class UsuarioService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Usuario usuario = repo.findByUsername(username)
+        Usuario user = repo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
+        List<GrantedAuthority> authorities = List.of(
+                new SimpleGrantedAuthority("ROLE_" + user.getRol())
+        );
+
         return new org.springframework.security.core.userdetails.User(
-                usuario.getUsername(),
-                usuario.getPassword(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + usuario.getRol())) // <- Importante
+                user.getUsername(),
+                user.getPassword(),
+                authorities
         );
     }
-
 
     public Usuario registrar(Usuario u) {
         u.setPassword(encoder.encode(u.getPassword()));
@@ -50,5 +54,10 @@ public class UsuarioService implements UserDetailsService {
     public Usuario buscarPorUsername(String username) {
         return repo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+    }
+
+    public boolean esAdmin(String username) {
+        Usuario user = buscarPorUsername(username);
+        return "ADMIN".equalsIgnoreCase(user.getRol());
     }
 }
