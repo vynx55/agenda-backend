@@ -10,16 +10,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
 public class JwtUtil {
-    private final String SECRET = "clave_de_256_bits_super_segura_para_jwt_test";
+    private final String SECRET = Base64.getEncoder().encodeToString(Keys.secretKeyFor(SignatureAlgorithm.HS256).getEncoded());
+
 
     private Key getSignKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
