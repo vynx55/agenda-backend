@@ -16,9 +16,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class JwtUtil {
-    private final String SECRET = Base64.getEncoder().encodeToString(Keys.secretKeyFor(SignatureAlgorithm.HS256).getEncoded());
 
+    // 🔐 Clave segura con al menos 32 caracteres (256 bits)
+    private static final String SECRET = "clave_super_secreta_256bits_segura123456";
 
+    // ✅ Devuelve la clave de firma ya parseada
     private Key getSignKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
@@ -50,6 +52,7 @@ public class JwtUtil {
         claims.put("authorities", userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()));
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
@@ -59,12 +62,13 @@ public class JwtUtil {
                 .compact();
     }
 
-    // 🔥 MÉTODO NUEVO: Para extraer authorities del token
     public List<SimpleGrantedAuthority> extractAuthorities(String token) {
         Claims claims = extractAllClaims(token);
-        List<String> roles = (List<String>) claims.get("authorities");
+        List<String> roles = claims.get("authorities", List.class);
         if (roles == null) return List.of();
+
         return roles.stream()
+                .map(Object::toString)
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
