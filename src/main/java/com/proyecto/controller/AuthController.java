@@ -7,6 +7,7 @@ import com.proyecto.dto.Auth.UsuarioRegisterRequest;
 import com.proyecto.entity.Usuario;
 import com.proyecto.service.Impl.UsuarioService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,30 +25,24 @@ public class AuthController {
     private final UsuarioService usuarioService;
     private final JwtUtil jwtUtil;
 
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody Usuario req) {
+        req.setRol("USER");
+        return ResponseEntity.ok(usuarioService.registrar(req));
+    }
+
     @PostMapping("/crear-admin")
-    public Usuario crearAdmin(@RequestBody Usuario u) {
-        u.setRol("ADMIN"); // Forzamos el rol ADMIN
-        return usuarioService.registrar(u);
+    public ResponseEntity<?> crearAdmin(@RequestBody Usuario req) {
+        req.setRol("ADMIN");
+        return ResponseEntity.ok(usuarioService.registrar(req));
     }
 
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody LoginRequest req) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest req) {
         manager.authenticate(new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword()));
-        UserDetails user = usuarioService.loadUserByUsername(req.getUsername());
+        UserDetails userDetails = usuarioService.loadUserByUsername(req.getUsername());
         Usuario entity = usuarioService.buscarPorUsername(req.getUsername());
-        String token = jwtUtil.generateToken(user, entity.getRol());
-        return new AuthResponse(token);
-    }
-
-    @PostMapping("/register")
-    public Usuario registrar(@RequestBody UsuarioRegisterRequest req) {
-        Usuario u = new Usuario();
-        u.setUsername(req.getUsername());
-        u.setPassword(req.getPassword());
-        u.setRol("USER"); // siempre USER por defecto
-        u.setNombre(req.getNombre());
-        u.setCorreo(req.getCorreo());
-        u.setTelefono(req.getTelefono());
-        return usuarioService.registrar(u);
+        String token = jwtUtil.generateToken(userDetails);
+        return ResponseEntity.ok(new AuthResponse(token));
     }
 }

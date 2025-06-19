@@ -15,34 +15,20 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@Primary
 public class UsuarioService implements UserDetailsService {
 
-    private final UsuarioRepositorio repo;
-    private PasswordEncoder encoder;
-
-    public UsuarioService(UsuarioRepositorio repo) {
-        this.repo = repo;
-    }
-
-    @Autowired
-    public void setPasswordEncoder(PasswordEncoder encoder) {
-        this.encoder = encoder;
-    }
+    @Autowired private UsuarioRepositorio repo;
+    @Autowired private PasswordEncoder encoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Usuario user = repo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-        List<GrantedAuthority> authorities = List.of(
-                new SimpleGrantedAuthority("ROLE_" + user.getRol())
-        );
-
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                authorities
+                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRol()))
         );
     }
 
@@ -54,10 +40,5 @@ public class UsuarioService implements UserDetailsService {
     public Usuario buscarPorUsername(String username) {
         return repo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
-    }
-
-    public boolean esAdmin(String username) {
-        Usuario user = buscarPorUsername(username);
-        return "ADMIN".equalsIgnoreCase(user.getRol());
     }
 }

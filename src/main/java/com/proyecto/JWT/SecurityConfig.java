@@ -18,8 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@EnableMethodSecurity
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final UsuarioService usuarioService;
@@ -29,30 +29,15 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-
-                        // Ver todas las citas - solo ADMIN
                         .requestMatchers(HttpMethod.GET, "/api/citas").hasRole("ADMIN")
-
-                        // Ver citas propias - solo USER
-                        .requestMatchers(HttpMethod.GET, "/api/citas/mis-citas").hasRole("USER")
-
-                        // Crear cita - ambos roles pueden
+                        .requestMatchers(HttpMethod.GET, "/api/citas/mis-citas").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.POST, "/api/citas").hasAnyRole("ADMIN", "USER")
-
-                        // Editar cita - solo ADMIN
                         .requestMatchers(HttpMethod.PUT, "/api/citas/**").hasRole("ADMIN")
-
-                        // Eliminar cita (forzado) - solo ADMIN
-                        .requestMatchers(HttpMethod.DELETE, "/api/citas/{id}").hasRole("ADMIN")
-
-                        // Cancelar propia cita - solo USER
-                        .requestMatchers(HttpMethod.DELETE, "/api/citas/cancelar/**").hasRole("USER")
-
-                        // Todo lo demás requiere autenticación
+                        .requestMatchers(HttpMethod.DELETE, "/api/citas/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -63,14 +48,14 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authProvider() {
-        DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
-        auth.setUserDetailsService(usuarioService);
-        auth.setPasswordEncoder(passwordEncoder());
-        return auth;
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(usuarioService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 

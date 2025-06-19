@@ -3,8 +3,6 @@ package com.proyecto.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @Entity
 @Data
 @NoArgsConstructor
@@ -22,17 +20,10 @@ public class Usuario {
     private String password;
 
     @Column(nullable = false)
-    private String rol; // Ej: "USER" o "ADMIN"
+    private String rol; // "ADMIN" o "USER"
 
-    @Column(nullable = false)
     private String nombre;
-
-    @Column(nullable = false)
     private String correo;
-
-    @Column(nullable = false)
     private String telefono;
-
-    @OneToMany(mappedBy = "usuario")
-    private List<Cita> citas;
 }
+
