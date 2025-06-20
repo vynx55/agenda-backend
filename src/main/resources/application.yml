@@ -2,7 +2,8 @@ server:
   port: ${PORT:8080}
 
 jwt:
-  secret: YmFzZTY0c2VjcmV0Y2xhdmVjdGVzdGVkMzJieXRlcw==
+  # Esta es una clave segura de 256 bits (32 bytes) codificada en Base64
+  secret: bXlTdXBlclNlY3JldEtleUluQmFzZTY0MTIzNDU2
 
 spring:
   main:
