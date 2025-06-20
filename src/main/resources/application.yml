@@ -3,7 +3,7 @@ server:
 
 jwt:
   # Esta es una clave segura de 256 bits (32 bytes) codificada en Base64
-  secret: bXlTdXBlclNlY3JldEtleUluQmFzZTY0MTIzNDU2
+  secret: QWJjZGVGZ0hpSmtMbW5PcFFyU3R1dnd4eXo0NTY3ODk=
 
 spring:
   main:
