@@ -8,8 +8,7 @@ import com.proyecto.entity.Usuario;
 import com.proyecto.service.Impl.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,22 +24,19 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<Usuario> register(@RequestBody Usuario req) {
         req.setRol(Rol.USUARIO);
-        Usuario registrado = usuarioService.registrar(req);
-        return ResponseEntity.ok(registrado);
+        return ResponseEntity.ok(usuarioService.registrar(req));
     }
 
     @PostMapping("/crear-admin")
     public ResponseEntity<Usuario> crearAdmin(@RequestBody Usuario req) {
         req.setRol(Rol.ADMIN);
-        Usuario admin = usuarioService.registrar(req);
-        return ResponseEntity.ok(admin);
+        return ResponseEntity.ok(usuarioService.registrar(req));
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest req) {
         manager.authenticate(new UsernamePasswordAuthenticationToken(
-                req.getUsername(), req.getPassword())
-        );
+                req.getUsername(), req.getPassword()));
         UserDetails userDetails = usuarioService.loadUserByUsername(req.getUsername());
         String token = jwtUtil.generateToken(userDetails);
         return ResponseEntity.ok(new AuthResponse(token));

@@ -29,16 +29,11 @@ public class JwtUtil {
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
-    }
-
-    private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
+        return claimsResolver.apply(Jwts.parserBuilder()
                 .setSigningKey(getKey())
                 .build()
                 .parseClaimsJws(token)
-                .getBody();
+                .getBody());
     }
 
     private boolean isTokenExpired(String token) {
@@ -46,16 +41,15 @@ public class JwtUtil {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return extractUsername(token).equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .claim("role", userDetails.getAuthorities().iterator().next().getAuthority())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 horas
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

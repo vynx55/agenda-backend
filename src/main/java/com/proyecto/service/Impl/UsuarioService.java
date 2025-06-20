@@ -3,7 +3,8 @@ package com.proyecto.service.Impl;
 import com.proyecto.entity.Rol;
 import com.proyecto.entity.Usuario;
 import com.proyecto.repository.UsuarioRepositorio;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,13 +14,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UsuarioService implements UserDetailsService {
 
-    @Autowired
-    private UsuarioRepositorio repo;
-
-    @Autowired
-    private PasswordEncoder encoder;
+    private final UsuarioRepositorio repo;
+    private final PasswordEncoder encoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -31,7 +30,7 @@ public class UsuarioService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                List.of(() -> rolConPrefijo)
+                List.of(new SimpleGrantedAuthority(rolConPrefijo))
         );
     }
 
