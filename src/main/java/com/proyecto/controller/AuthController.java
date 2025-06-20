@@ -5,7 +5,7 @@ import com.proyecto.dto.Auth.AuthResponse;
 import com.proyecto.dto.Auth.LoginRequest;
 import com.proyecto.entity.Rol;
 import com.proyecto.entity.Usuario;
-import com.proyecto.service.Impl.UsuarioService;
+import com.proyecto.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;

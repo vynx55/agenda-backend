@@ -2,7 +2,7 @@ package com.proyecto.controller;
 
 import com.proyecto.dto.Cita.CitaRequestDTO;
 import com.proyecto.dto.Cita.CitaResponseDTO;
-import com.proyecto.service.Impl.CitaService;
+import com.proyecto.service.CitaService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

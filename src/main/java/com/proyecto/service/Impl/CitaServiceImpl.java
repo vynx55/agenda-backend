@@ -1,3 +1,4 @@
+// CitaServiceImpl.java
 package com.proyecto.service.Impl;
 
 import com.proyecto.dto.Cita.CitaRequestDTO;
@@ -6,7 +7,8 @@ import com.proyecto.entity.Cita;
 import com.proyecto.entity.Usuario;
 import com.proyecto.mapper.CitaMapper;
 import com.proyecto.repository.CitaRepository;
-import lombok.AllArgsConstructor;
+import com.proyecto.service.CitaService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -16,7 +18,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CitaServiceImpl implements CitaService {
 
     private final CitaRepository citaRepository;
@@ -24,15 +26,7 @@ public class CitaServiceImpl implements CitaService {
 
     private Usuario getUsuarioAutenticado() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
-            throw new RuntimeException("Usuario no autenticado");
-        }
         return (Usuario) auth.getPrincipal();
-    }
-
-    private boolean isAdmin() {
-        return getUsuarioAutenticado().getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
     }
 
     @Override
@@ -49,7 +43,7 @@ public class CitaServiceImpl implements CitaService {
     }
 
     @Override
-    public CitaResponseDTO guardar(CitaRequestDTO requestDTO, String ignoredUsername) {
+    public CitaResponseDTO guardar(CitaRequestDTO requestDTO, String username) {
         Usuario usuario = getUsuarioAutenticado();
         Cita cita = citaMapper.toEntity(requestDTO);
         cita.setUsuario(usuario);
@@ -77,7 +71,7 @@ public class CitaServiceImpl implements CitaService {
     }
 
     @Override
-    public List<CitaResponseDTO> listarPorUsername(String ignoredUsername) {
+    public List<CitaResponseDTO> listarPorUsername(String username) {
         Usuario usuario = getUsuarioAutenticado();
         return citaRepository.findByUsuario(usuario).stream()
                 .map(citaMapper::toResponse)
@@ -85,7 +79,7 @@ public class CitaServiceImpl implements CitaService {
     }
 
     @Override
-    public void cancelarCitaPorUsuario(Long id, String ignoredUsername) {
+    public void cancelarCitaPorUsuario(Long id, String username) {
         Usuario usuario = getUsuarioAutenticado();
         Cita cita = citaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
