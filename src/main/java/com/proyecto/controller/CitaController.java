@@ -18,42 +18,42 @@ public class CitaController {
 
     private final CitaService service;
 
-    // ✅ ADMIN: Ver todas las citas
+    // 🟥 ADMIN: Ver todas las citas
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<CitaResponseDTO> listar() {
         return service.listar();
     }
 
-    // ✅ USER y ADMIN: Ver sus propias citas
+    // 🟨 USER: Ver sus propias citas
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/mis-citas")
     public List<CitaResponseDTO> listarMisCitas(Authentication auth) {
         return service.listarPorUsername(auth.getName());
     }
 
-    // ✅ USER y ADMIN: Crear cita
+    // 🟨 USER y ADMIN: Crear una cita
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping
     public CitaResponseDTO crear(@RequestBody CitaRequestDTO dto, Authentication auth) {
         return service.guardar(dto, auth.getName());
     }
 
-    // ✅ ADMIN: Editar cualquier cita
+    // 🟥 ADMIN: Editar cita
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public CitaResponseDTO editar(@PathVariable Long id, @RequestBody CitaRequestDTO dto) {
         return service.editar(id, dto);
     }
 
-    // ✅ ADMIN: Eliminar cualquier cita
+    // 🟥 ADMIN: Eliminar cita
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
         service.eliminar(id);
     }
 
-    // ✅ USER y ADMIN: Cancelar su propia cita
+    // 🟨 USER y ADMIN: Cancelar cita propia
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @DeleteMapping("/cancelar/{id}")
     public void cancelarCitaPropia(@PathVariable Long id, Authentication auth) {

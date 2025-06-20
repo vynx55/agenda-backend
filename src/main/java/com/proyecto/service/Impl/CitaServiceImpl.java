@@ -7,6 +7,8 @@ import com.proyecto.entity.Usuario;
 import com.proyecto.mapper.CitaMapper;
 import com.proyecto.repository.CitaRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,30 +23,36 @@ public class CitaServiceImpl implements CitaService {
     private final CitaMapper citaMapper;
     private final UsuarioService usuarioService;
 
-    // 🟥 ADMIN: Ver todas las citas
+    private boolean isAdmin() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null && auth.isAuthenticated() &&
+                auth.getAuthorities().stream()
+                        .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+    }
+
     @Override
     public List<CitaResponseDTO> listar() {
+        boolean admin = isAdmin();
         return citaRepository.findAll().stream()
-                .map(citaMapper::toResponse)
+                .map(cita -> citaMapper.toResponse(cita, admin))
                 .collect(Collectors.toList());
     }
 
-    // 🟨 USER/ADMIN: Buscar una cita por ID (validación según necesidad)
     @Override
     public Optional<CitaResponseDTO> buscar(Long id) {
-        return citaRepository.findById(id).map(citaMapper::toResponse);
+        boolean admin = isAdmin();
+        return citaRepository.findById(id)
+                .map(cita -> citaMapper.toResponse(cita, admin));
     }
 
-    // 🟨 USER/ADMIN: Crear una nueva cita vinculada al usuariao autenticado
     @Override
     public CitaResponseDTO guardar(CitaRequestDTO requestDTO, String username) {
         Usuario usuario = usuarioService.buscarPorUsername(username);
         Cita cita = citaMapper.toEntity(requestDTO);
         cita.setUsuario(usuario);
-        return citaMapper.toResponse(citaRepository.save(cita));
+        return citaMapper.toResponse(citaRepository.save(cita), isAdmin());
     }
 
-    // 🟥 ADMIN: Editar cita sin cambiar usuario
     @Override
     public CitaResponseDTO editar(Long id, CitaRequestDTO requestDTO) {
         Cita cita = citaRepository.findById(id)
@@ -57,21 +65,19 @@ public class CitaServiceImpl implements CitaService {
         cita.setObservaciones(requestDTO.getObservaciones());
         cita.setEstado(requestDTO.getEstado());
 
-        return citaMapper.toResponse(citaRepository.save(cita));
+        return citaMapper.toResponse(citaRepository.save(cita), isAdmin());
     }
 
-    // 🟥 ADMIN: Eliminar cita
     @Override
     public void eliminar(Long id) {
         citaRepository.deleteById(id);
     }
 
-    // 🟨 USER: Ver solo sus citas
     @Override
     public List<CitaResponseDTO> listarPorUsername(String username) {
         Usuario usuario = usuarioService.buscarPorUsername(username);
         return citaRepository.findByUsuario(usuario).stream()
-                .map(citaMapper::toResponse)
+                .map(cita -> citaMapper.toResponse(cita, false)) // no es admin
                 .collect(Collectors.toList());
     }
 
