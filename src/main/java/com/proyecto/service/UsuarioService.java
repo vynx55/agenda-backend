@@ -4,22 +4,15 @@ import com.proyecto.entity.Rol;
 import com.proyecto.entity.Usuario;
 import com.proyecto.repository.UsuarioRepositorio;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UsuarioService implements UserDetailsService {
+public class UsuarioService {
 
     private final UsuarioRepositorio usuarioRepository;
     private final PasswordEncoder passwordEncoder;
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return usuarioRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
-    }
 
     public Usuario registrar(Usuario usuario) {
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
@@ -29,7 +22,7 @@ public class UsuarioService implements UserDetailsService {
 
     public Usuario crearAdmin(Usuario usuario) {
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        usuario.setRol(com.proyecto.entity.Rol.ADMIN);
+        usuario.setRol(Rol.ADMIN);
         return usuarioRepository.save(usuario);
     }
 
@@ -37,4 +30,3 @@ public class UsuarioService implements UserDetailsService {
         return usuarioRepository.findByUsername(username).orElse(null);
     }
 }
-
