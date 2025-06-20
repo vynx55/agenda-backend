@@ -1,5 +1,6 @@
 package com.proyecto.JWT;
 
+import com.proyecto.service.Impl.UsuarioService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +18,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtFilter jwtFilter;
+    private final JwtUtil jwtUtil;
+    private final UsuarioService usuarioService;
+
+    @Bean
+    public JwtFilter jwtFilter() {
+        return new JwtFilter(jwtUtil, usuarioService);
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -26,17 +33,17 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
-                        .requestMatchers("/api/citas/mis-citas").authenticated()
-                        .requestMatchers("/api/citas/cancelar/**").authenticated()
-                        .requestMatchers("/api/citas/**").authenticated()
+                        .requestMatchers("/api/auth/crear-admin").hasRole("ADMIN")
+                        .requestMatchers("/api/citas/mis-citas").hasRole("USER")
+                        .requestMatchers("/api/citas/cancelar/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/citas/**").hasRole("ADMIN")
                         .anyRequest().denyAll()
                 )
-
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) ->
                                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
                 )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
