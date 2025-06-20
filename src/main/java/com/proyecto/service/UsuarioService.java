@@ -3,9 +3,7 @@ package com.proyecto.service;
 import com.proyecto.entity.Rol;
 import com.proyecto.entity.Usuario;
 import com.proyecto.repository.UsuarioRepositorio;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,9 +14,6 @@ public class UsuarioService implements UserDetailsService {
 
     private final UsuarioRepositorio usuarioRepository;
     private final PasswordEncoder passwordEncoder;
-
-    @Lazy
-    private final CitaService citaService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -42,3 +37,4 @@ public class UsuarioService implements UserDetailsService {
         return usuarioRepository.findByUsername(username).orElse(null);
     }
 }
+

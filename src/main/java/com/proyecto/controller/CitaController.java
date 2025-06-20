@@ -17,45 +17,39 @@ public class CitaController {
 
     private final CitaService service;
 
-    // 🟥 ADMIN: Ver todas las citas
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<CitaResponseDTO> listar() {
         return service.listar();
     }
 
-    // 🟨 USER: Ver sus propias citas
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/mis-citas")
     public List<CitaResponseDTO> listarMisCitas() {
-        return service.listarPorUsername(null); // ya no se usa el username internamente
+        return service.listarPorUsername(null);
     }
 
-    // 🟨 USER y ADMIN: Crear una cita
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping
     public CitaResponseDTO crear(@RequestBody CitaRequestDTO dto) {
-        return service.guardar(dto, null); // ya no se usa el username
+        return service.guardar(dto, null);
     }
 
-    // 🟥 ADMIN: Editar cita
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public CitaResponseDTO editar(@PathVariable Long id, @RequestBody CitaRequestDTO dto) {
         return service.editar(id, dto);
     }
 
-    // 🟥 ADMIN: Eliminar cita
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
         service.eliminar(id);
     }
 
-    // 🟨 USER y ADMIN: Cancelar cita propia
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @DeleteMapping("/cancelar/{id}")
     public void cancelarCitaPropia(@PathVariable Long id) {
-        service.cancelarCitaPorUsuario(id, null); // username se ignora
+        service.cancelarCitaPorUsuario(id, null);
     }
 }

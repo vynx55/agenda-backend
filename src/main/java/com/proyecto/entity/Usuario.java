@@ -22,7 +22,6 @@ public class Usuario implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Rol rol;
 
-    // Otros campos opcionales...
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
