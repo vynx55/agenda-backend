@@ -19,6 +19,7 @@ public class AuthController {
 
     private final AuthenticationManager manager;
     private final UsuarioService usuarioService;
+    private final com.proyecto.service.Impl.UserDetailsServiceImpl userDetailsService;
     private final JwtUtil jwtUtil;
 
     @PostMapping("/register")
@@ -30,14 +31,15 @@ public class AuthController {
     @PostMapping("/crear-admin")
     public ResponseEntity<Usuario> crearAdmin(@RequestBody Usuario req) {
         req.setRol(Rol.ADMIN);
-        return ResponseEntity.ok(usuarioService.registrar(req));
+        return ResponseEntity.ok(usuarioService.crearAdmin(req));
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest req) {
         manager.authenticate(new UsernamePasswordAuthenticationToken(
                 req.getUsername(), req.getPassword()));
-        UserDetails userDetails = usuarioService.loadUserByUsername(req.getUsername());
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(req.getUsername());
         String token = jwtUtil.generateToken(userDetails);
         return ResponseEntity.ok(new AuthResponse(token));
     }
