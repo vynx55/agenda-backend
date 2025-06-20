@@ -46,6 +46,10 @@ public class CitaMapper {
                 .nombreCliente(isAdmin && usuario != null ? usuario.getNombre() : null)
                 .correo(isAdmin && usuario != null ? usuario.getCorreo() : null)
                 .telefono(isAdmin && usuario != null ? usuario.getTelefono() : null)
+                .usuarioUsername(isAdmin && usuario != null ? usuario.getUsername() : null)
+                .usuarioNombre(isAdmin && usuario != null ? usuario.getNombre() : null)
+                .usuarioCorreo(isAdmin && usuario != null ? usuario.getCorreo() : null)
+                .usuarioTelefono(isAdmin && usuario != null ? usuario.getTelefono() : null)
                 .build();
     }
 }

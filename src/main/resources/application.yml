@@ -1,6 +1,9 @@
 server:
   port: ${PORT:8080}
 
+jwt:
+  secret: MiClaveSecretaJWT256Segura123456789!
+
 spring:
   main:
     allow-circular-references: true

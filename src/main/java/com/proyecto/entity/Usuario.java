@@ -1,5 +1,6 @@
 package com.proyecto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,10 +18,11 @@ public class Usuario {
     private String username;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
-    @Column(nullable = false)
-    private String rol; // "ADMIN" o "USER"
+    @Enumerated(EnumType.STRING)
+    private Rol rol; // "ADMIN" o "USER"
 
     private String nombre;
     private String correo;

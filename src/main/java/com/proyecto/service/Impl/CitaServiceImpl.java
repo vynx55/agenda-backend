@@ -47,7 +47,8 @@ public class CitaServiceImpl implements CitaService {
     // 🟥 ADMIN: Editar cita sin cambiar usuario
     @Override
     public CitaResponseDTO editar(Long id, CitaRequestDTO requestDTO) {
-        Cita cita = citaRepository.findById(id).orElseThrow();
+        Cita cita = citaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
 
         cita.setFecha(requestDTO.getFecha());
         cita.setHora(requestDTO.getHora());
@@ -83,6 +84,7 @@ public class CitaServiceImpl implements CitaService {
             throw new RuntimeException("No puedes cancelar una cita que no te pertenece.");
         }
 
-        citaRepository.deleteById(id);
+        cita.setEstado("CANCELADA");
+        citaRepository.save(cita);
     }
 }
