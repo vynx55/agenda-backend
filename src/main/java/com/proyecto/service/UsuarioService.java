@@ -38,12 +38,6 @@ public class UsuarioService implements UserDetailsService {
         return usuarioRepository.save(usuario);
     }
 
-    @Transactional
-    public void eliminarUsuarioYSusCitas(Long id) {
-        citaService.eliminarCitasPorUsuarioId(id);
-        usuarioRepository.deleteById(id);
-    }
-
     public Usuario obtenerPorUsername(String username) {
         return usuarioRepository.findByUsername(username).orElse(null);
     }
