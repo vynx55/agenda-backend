@@ -2,7 +2,7 @@ server:
   port: ${PORT:8080}
 
 jwt:
-  secret: MiClaveSecretaJWT256Segura123456789!
+  secret: YmFzZTY0c2VjcmV0Y2xhdmVjdGVzdGVkMzJieXRlcw==
 
 spring:
   main:

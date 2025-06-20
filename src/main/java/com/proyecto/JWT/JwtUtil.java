@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -17,7 +18,7 @@ public class JwtUtil {
     private String secret;
 
     private Key getKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
+        return Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret));
     }
 
     public String extractUsername(String token) {
