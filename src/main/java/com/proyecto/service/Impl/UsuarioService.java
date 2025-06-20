@@ -4,7 +4,6 @@ import com.proyecto.entity.Rol;
 import com.proyecto.entity.Usuario;
 import com.proyecto.repository.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,13 +26,12 @@ public class UsuarioService implements UserDetailsService {
         Usuario user = repo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-        // Corrige el uso del enum Rol
         String rolConPrefijo = "ROLE_" + user.getRol().name();
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                List.of(new SimpleGrantedAuthority(rolConPrefijo))
+                List.of(() -> rolConPrefijo)
         );
     }
 

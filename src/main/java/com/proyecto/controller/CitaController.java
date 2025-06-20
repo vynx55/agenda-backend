@@ -5,7 +5,6 @@ import com.proyecto.dto.Cita.CitaResponseDTO;
 import com.proyecto.service.Impl.CitaService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,15 +27,15 @@ public class CitaController {
     // 🟨 USER: Ver sus propias citas
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/mis-citas")
-    public List<CitaResponseDTO> listarMisCitas(Authentication auth) {
-        return service.listarPorUsername(auth.getName());
+    public List<CitaResponseDTO> listarMisCitas() {
+        return service.listarPorUsername(null); // ya no se usa el username internamente
     }
 
     // 🟨 USER y ADMIN: Crear una cita
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping
-    public CitaResponseDTO crear(@RequestBody CitaRequestDTO dto, Authentication auth) {
-        return service.guardar(dto, auth.getName());
+    public CitaResponseDTO crear(@RequestBody CitaRequestDTO dto) {
+        return service.guardar(dto, null); // ya no se usa el username
     }
 
     // 🟥 ADMIN: Editar cita
@@ -56,7 +55,7 @@ public class CitaController {
     // 🟨 USER y ADMIN: Cancelar cita propia
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @DeleteMapping("/cancelar/{id}")
-    public void cancelarCitaPropia(@PathVariable Long id, Authentication auth) {
-        service.cancelarCitaPorUsuario(id, auth.getName());
+    public void cancelarCitaPropia(@PathVariable Long id) {
+        service.cancelarCitaPorUsuario(id, null); // username se ignora
     }
 }

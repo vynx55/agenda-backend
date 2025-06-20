@@ -21,36 +21,39 @@ public class CitaServiceImpl implements CitaService {
 
     private final CitaRepository citaRepository;
     private final CitaMapper citaMapper;
-    private final UsuarioService usuarioService;
+
+    private Usuario getUsuarioAutenticado() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new RuntimeException("Usuario no autenticado");
+        }
+        return (Usuario) auth.getPrincipal();
+    }
 
     private boolean isAdmin() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return auth != null && auth.isAuthenticated() &&
-                auth.getAuthorities().stream()
-                        .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        return getUsuarioAutenticado().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
     }
 
     @Override
     public List<CitaResponseDTO> listar() {
-        boolean admin = isAdmin();
         return citaRepository.findAll().stream()
-                .map(cita -> citaMapper.toResponse(cita, admin))
+                .map(citaMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
     public Optional<CitaResponseDTO> buscar(Long id) {
-        boolean admin = isAdmin();
         return citaRepository.findById(id)
-                .map(cita -> citaMapper.toResponse(cita, admin));
+                .map(citaMapper::toResponse);
     }
 
     @Override
-    public CitaResponseDTO guardar(CitaRequestDTO requestDTO, String username) {
-        Usuario usuario = usuarioService.buscarPorUsername(username);
+    public CitaResponseDTO guardar(CitaRequestDTO requestDTO, String ignoredUsername) {
+        Usuario usuario = getUsuarioAutenticado();
         Cita cita = citaMapper.toEntity(requestDTO);
         cita.setUsuario(usuario);
-        return citaMapper.toResponse(citaRepository.save(cita), isAdmin());
+        return citaMapper.toResponse(citaRepository.save(cita));
     }
 
     @Override
@@ -65,7 +68,7 @@ public class CitaServiceImpl implements CitaService {
         cita.setObservaciones(requestDTO.getObservaciones());
         cita.setEstado(requestDTO.getEstado());
 
-        return citaMapper.toResponse(citaRepository.save(cita), isAdmin());
+        return citaMapper.toResponse(citaRepository.save(cita));
     }
 
     @Override
@@ -74,19 +77,20 @@ public class CitaServiceImpl implements CitaService {
     }
 
     @Override
-    public List<CitaResponseDTO> listarPorUsername(String username) {
-        Usuario usuario = usuarioService.buscarPorUsername(username);
+    public List<CitaResponseDTO> listarPorUsername(String ignoredUsername) {
+        Usuario usuario = getUsuarioAutenticado();
         return citaRepository.findByUsuario(usuario).stream()
-                .map(cita -> citaMapper.toResponse(cita, false)) // no es admin
+                .map(citaMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void cancelarCitaPorUsuario(Long id, String username) {
+    public void cancelarCitaPorUsuario(Long id, String ignoredUsername) {
+        Usuario usuario = getUsuarioAutenticado();
         Cita cita = citaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
 
-        if (!cita.getUsuario().getUsername().equals(username)) {
+        if (!cita.getUsuario().getUsername().equals(usuario.getUsername())) {
             throw new RuntimeException("No puedes cancelar una cita que no te pertenece.");
         }
 
