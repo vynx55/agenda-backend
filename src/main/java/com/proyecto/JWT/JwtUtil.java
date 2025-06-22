@@ -2,7 +2,6 @@ package com.proyecto.JWT;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -14,11 +13,10 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
-    private String secret;
+    private static final String SECRET = "QWJjZGVGZ0hpSmtMbW5PcFFyU3R1dnd4eXo0NTY3ODk=";
 
     private Key getKey() {
-        return Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret));
+        return Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET));
     }
 
     public String extractUsername(String token) {
@@ -50,7 +48,7 @@ public class JwtUtil {
                 .setSubject(userDetails.getUsername())
                 .claim("role", userDetails.getAuthorities().iterator().next().getAuthority())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 horas
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
