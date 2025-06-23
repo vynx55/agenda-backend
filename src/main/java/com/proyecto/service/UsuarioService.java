@@ -1,3 +1,4 @@
+// UsuarioService.java
 package com.proyecto.service;
 
 import com.proyecto.entity.Rol;
@@ -16,7 +17,7 @@ public class UsuarioService {
 
     public Usuario registrar(Usuario usuario) {
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        usuario.setRol(Rol.USUARIO);
+        usuario.setRol(Rol.USER);
         return usuarioRepository.save(usuario);
     }
 

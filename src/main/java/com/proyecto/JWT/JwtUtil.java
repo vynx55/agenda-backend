@@ -12,7 +12,6 @@ import java.util.function.Function;
 
 @Component
 public class JwtUtil {
-
     private static final String SECRET = "QWJjZGVGZ0hpSmtMbW5PcFFyU3R1dnd4eXo0NTY3ODk=";
 
     private Key getKey() {
@@ -28,19 +27,15 @@ public class JwtUtil {
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        return claimsResolver.apply(Jwts.parserBuilder()
-                .setSigningKey(getKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody());
-    }
-
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+        return claimsResolver.apply(Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(token).getBody());
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         return extractUsername(token).equals(userDetails.getUsername()) && !isTokenExpired(token);
+    }
+
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
     }
 
     public String generateToken(UserDetails userDetails) {

@@ -1,3 +1,4 @@
+// UserDetailsServiceImpl.java
 package com.proyecto.service.Impl;
 
 import com.proyecto.repository.UsuarioRepositorio;
@@ -17,4 +18,3 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
     }
 }
-

@@ -1,21 +1,14 @@
+// CitaRequestDTO.java
 package com.proyecto.dto.Cita;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import lombok.Data;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class CitaRequestDTO {
-
-    private String servicio;
-    private Double precio;
     private String fecha;
     private String hora;
+    private String servicio;
+    private Double precio;
     private String observaciones;
     private String estado;
-
 }

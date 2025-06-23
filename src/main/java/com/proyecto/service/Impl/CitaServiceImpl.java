@@ -38,8 +38,7 @@ public class CitaServiceImpl implements CitaService {
 
     @Override
     public Optional<CitaResponseDTO> buscar(Long id) {
-        return citaRepository.findById(id)
-                .map(citaMapper::toResponse);
+        return citaRepository.findById(id).map(citaMapper::toResponse);
     }
 
     @Override
@@ -54,14 +53,12 @@ public class CitaServiceImpl implements CitaService {
     public CitaResponseDTO editar(Long id, CitaRequestDTO requestDTO) {
         Cita cita = citaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
-
         cita.setFecha(requestDTO.getFecha());
         cita.setHora(requestDTO.getHora());
         cita.setServicio(requestDTO.getServicio());
         cita.setPrecio(requestDTO.getPrecio());
         cita.setObservaciones(requestDTO.getObservaciones());
         cita.setEstado(requestDTO.getEstado());
-
         return citaMapper.toResponse(citaRepository.save(cita));
     }
 

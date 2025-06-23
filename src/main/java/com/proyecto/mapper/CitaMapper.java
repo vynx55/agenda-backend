@@ -28,12 +28,9 @@ public class CitaMapper {
         dto.setPrecio(cita.getPrecio());
         dto.setObservaciones(cita.getObservaciones());
         dto.setEstado(cita.getEstado());
-
         if (cita.getUsuario() != null) {
             dto.setUsuarioUsername(cita.getUsuario().getUsername());
         }
-
         return dto;
     }
 }
-

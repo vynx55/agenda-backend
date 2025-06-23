@@ -1,3 +1,4 @@
+// CitaService.java
 package com.proyecto.service;
 
 import com.proyecto.dto.Cita.CitaRequestDTO;
@@ -7,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CitaService {
-
     List<CitaResponseDTO> listar();
     Optional<CitaResponseDTO> buscar(Long id);
     CitaResponseDTO guardar(CitaRequestDTO requestDTO, String username);
