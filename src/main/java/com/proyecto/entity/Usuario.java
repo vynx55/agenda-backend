@@ -10,8 +10,10 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Usuario implements UserDetails {
 
     @Id
@@ -20,6 +22,9 @@ public class Usuario implements UserDetails {
 
     private String username;
     private String password;
+    private String correo;
+    private String telefono;
+    private String nombre;
 
     @Enumerated(EnumType.STRING)
     private Rol rol;
@@ -31,10 +36,13 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() { return true; }
+
     @Override
     public boolean isAccountNonLocked() { return true; }
+
     @Override
     public boolean isCredentialsNonExpired() { return true; }
+
     @Override
     public boolean isEnabled() { return true; }
 }
