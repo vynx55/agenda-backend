@@ -4,6 +4,7 @@ import com.proyecto.service.Impl.UserDetailsServiceImpl;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.*;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -29,7 +30,21 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+
+                        // ADMIN
+                        .requestMatchers(HttpMethod.GET, "/api/citas").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/citas/{id}").hasRole("ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // USER + ADMIN
+                        .requestMatchers(HttpMethod.POST, "/api/citas").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/citas/{id}").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/citas/{id}").hasAnyRole("USER", "ADMIN")
+
+                        // Solo USER
+                        .requestMatchers("/api/citas/mis-citas").hasRole("USER")
+                        .requestMatchers("/api/citas/cancelar/**").hasRole("USER")
+
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(daoAuthProvider())
