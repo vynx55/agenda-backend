@@ -1,6 +1,8 @@
 package com.proyecto.controller;
 
 import com.proyecto.JWT.JwtUtil;
+import com.proyecto.dto.Auth.AuthResponse;
+import com.proyecto.dto.Auth.LoginRequest;
 import com.proyecto.entity.Usuario;
 import com.proyecto.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +24,13 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Usuario usuario) {
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(usuario.getUsername(), usuario.getPassword())
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
         UserDetails userDetails = (UserDetails) auth.getPrincipal();
         String jwt = jwtUtil.generateToken(userDetails);
-        return ResponseEntity.ok(jwt);
+        return ResponseEntity.ok(new AuthResponse(jwt));
     }
 
     @PostMapping("/registro")

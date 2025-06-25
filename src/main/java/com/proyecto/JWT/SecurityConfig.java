@@ -24,15 +24,18 @@ import java.util.List;
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfig {
+
     private final JwtFilter jwtFilter;
     private final UserDetailsServiceImpl userDetailsService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+        http
+                .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Acceso público
                         .requestMatchers("/api/auth/**").permitAll()
 
                         // ADMIN
@@ -49,6 +52,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/citas/mis-citas").hasAuthority("ROLE_USER")
                         .requestMatchers(HttpMethod.PUT, "/api/citas/cancelar/**").hasAuthority("ROLE_USER")
 
+                        // Cualquier otro endpoint requiere autenticación
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(daoAuthProvider())
@@ -79,7 +83,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("*")); // Cambiar si tienes frontend específico
+        config.setAllowedOrigins(List.of("*")); // Cambiar por origen de tu frontend en producción
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

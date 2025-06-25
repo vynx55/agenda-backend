@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
+
     private static final String SECRET = "QWJjZGVGZ0hpSmtMbW5PcFFyU3R1dnd4eXo0NTY3ODk=";
 
     private Key getKey() {
@@ -27,16 +28,21 @@ public class JwtUtil {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        return claimsResolver.apply(Jwts.parserBuilder()
+    public <T> T extractClaim(String token, Function<Claims, T> resolver) {
+        return resolver.apply(extractAllClaims(token));
+    }
+
+    public Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
                 .setSigningKey(getKey())
                 .build()
                 .parseClaimsJws(token)
-                .getBody());
+                .getBody();
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        return extractUsername(token).equals(userDetails.getUsername()) && !isTokenExpired(token);
+        final String username = extractUsername(token);
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {
@@ -44,16 +50,15 @@ public class JwtUtil {
     }
 
     public String generateToken(UserDetails userDetails) {
-        List<String> authorities = userDetails.getAuthorities()
-                .stream()
+        List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
-                .claim("authorities", authorities)
+                .claim("authorities", roles)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 horas
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10h
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
