@@ -36,22 +36,21 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
 
                         // ADMIN
-                        .requestMatchers(HttpMethod.GET, "/api/citas").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/citas/{id}").hasRole("ADMIN")
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/citas").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/citas/{id}").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
 
                         // USER + ADMIN
-                        .requestMatchers(HttpMethod.POST, "/api/citas").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/citas/{id}").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/citas/{id}").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/citas").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/citas/{id}").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/citas/{id}").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
 
                         // Solo USER
-                        .requestMatchers(HttpMethod.GET, "/api/citas/mis-citas").hasRole("USER")
-                        .requestMatchers(HttpMethod.PUT, "/api/citas/cancelar/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/citas/mis-citas").hasAuthority("ROLE_USER")
+                        .requestMatchers(HttpMethod.PUT, "/api/citas/cancelar/**").hasAuthority("ROLE_USER")
 
                         .anyRequest().authenticated()
                 )
-
                 .authenticationProvider(daoAuthProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -80,7 +79,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("*")); // O añade tu frontend
+        config.setAllowedOrigins(List.of("*")); // Cambiar si tienes frontend específico
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -90,5 +89,4 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
 }
