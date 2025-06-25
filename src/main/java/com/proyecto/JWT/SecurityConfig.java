@@ -46,11 +46,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/citas/{id}").hasAnyRole("USER", "ADMIN")
 
                         // Solo USER
-                        .requestMatchers("/api/citas/mis-citas").hasRole("USER")
-                        .requestMatchers("/api/citas/cancelar/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/api/citas/mis-citas").hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, "/api/citas/cancelar/**").hasRole("USER")
 
                         .anyRequest().authenticated()
                 )
+
                 .authenticationProvider(daoAuthProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
