@@ -61,6 +61,9 @@ public class CitaController {
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/mis-citas")
     public ResponseEntity<List<CitaResponseDTO>> listarPorUsuario(Authentication auth) {
+        System.out.println("Auth principal: " + auth.getName());
+        System.out.println("Authorities: " + auth.getAuthorities()); // <--- AQUI
+
         String username = auth.getName();
         return ResponseEntity.ok(citaService.listarPorUsername(username));
     }
