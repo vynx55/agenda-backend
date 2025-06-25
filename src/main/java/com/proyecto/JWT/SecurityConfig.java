@@ -44,19 +44,19 @@ public class SecurityConfig {
                         // Acceso público
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // ADMIN
-                        .requestMatchers(HttpMethod.GET, "/api/citas").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/citas/{id}").hasRole("ADMIN")
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        // Solo USER (rutas específicas primero)
+                        .requestMatchers(HttpMethod.GET, "/api/citas/mis-citas").hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, "/api/citas/cancelar/**").hasRole("USER")
 
                         // USER + ADMIN
                         .requestMatchers(HttpMethod.POST, "/api/citas").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/citas/{id}").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/citas/{id}").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/citas/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/citas/**").hasAnyRole("USER", "ADMIN")
 
-                        // Solo USER
-                        .requestMatchers(HttpMethod.GET, "/api/citas/mis-citas").hasRole("USER")
-                        .requestMatchers(HttpMethod.PUT, "/api/citas/cancelar/**").hasRole("USER")
+                        // Solo ADMIN
+                        .requestMatchers(HttpMethod.GET, "/api/citas").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/citas/*").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         // Todo lo demás requiere autenticación
                         .anyRequest().authenticated()
