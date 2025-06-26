@@ -1,5 +1,6 @@
 package com.proyecto.JWT;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -42,10 +43,11 @@ public class JwtFilter extends OncePerRequestFilter {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             if (jwtUtil.isTokenValid(token, userDetails)) {
-                // Recupera los roles desde el token
-                List<String> roles = jwtUtil.extractAllClaims(token).get("authorities", List.class);
-                List<SimpleGrantedAuthority> authorities = roles.stream()
-                        .map(SimpleGrantedAuthority::new)
+                // Recupera los roles desde el token de forma segura
+                Claims claims = jwtUtil.extractAllClaims(token);
+                List<?> rawRoles = claims.get("authorities", List.class);
+                List<SimpleGrantedAuthority> authorities = rawRoles.stream()
+                        .map(role -> new SimpleGrantedAuthority(role.toString()))
                         .collect(Collectors.toList());
 
                 UsernamePasswordAuthenticationToken authToken =

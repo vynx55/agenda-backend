@@ -4,9 +4,9 @@ spring:
   main:
     allow-circular-references: true
   datasource:
-    url: jdbc:mysql://mysql.railway.internal:3306/railway
+    url: jdbc:mysql://localhost:3306/AgendaNegocio
     username: root
-    password: RueloHWPmiEvGKpFduYdAQvpBzwMbJVB
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:

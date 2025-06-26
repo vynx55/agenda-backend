@@ -1,14 +1,22 @@
 package com.proyecto.controller;
 
+import com.proyecto.dto.Cita.ActualizarEstadoDTO;
 import com.proyecto.dto.Cita.CitaRequestDTO;
 import com.proyecto.dto.Cita.CitaResponseDTO;
 import com.proyecto.service.CitaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -75,6 +83,33 @@ public class CitaController {
         String username = auth.getName();
         citaService.cancelarCitaPorUsuario(id, username);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/citas/{id}/estado")
+    public ResponseEntity<?> actualizarEstado(@PathVariable Long id, @RequestBody @Validated ActualizarEstadoDTO dto) {
+        citaService.actualizarEstado(id, dto.getEstado());
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/exportar")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<byte[]> exportarCitas() {
+        String csv = citaService.exportarCitasACSV();
+
+        byte[] bytes = csv.getBytes();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=citas.csv")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(bytes);
+    }
+
+    @GetMapping("/paginado-filtrado")
+    public Page<CitaResponseDTO> listarPaginadoFiltrado(
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
+            Pageable pageable) {
+        return citaService.listarPaginadoFiltrado(estado, fecha, pageable);
     }
 }
 

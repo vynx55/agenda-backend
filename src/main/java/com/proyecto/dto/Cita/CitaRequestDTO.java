@@ -1,4 +1,3 @@
-// CitaRequestDTO.java
 package com.proyecto.dto.Cita;
 
 import lombok.Data;
@@ -11,4 +10,5 @@ public class CitaRequestDTO {
     private Double precio;
     private String observaciones;
     private String estado;
+    private Long empleadoId;
 }
